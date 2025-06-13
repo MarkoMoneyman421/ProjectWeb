@@ -82,6 +82,8 @@
                     <button id="mobileMenuButton" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                         <span class="sr-only">Open main menu</span>
                         <i class="fas fa-bars h-6 w-6"></i>
+						<!-- Badge de notificación para notificacion en movil hamburguesa alerta roja -->
+  <span id="productIndicator" class="hidden absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-600 border-2 border-gray-900"></span>
                     </button>
                 </div>
             </div>
@@ -530,7 +532,10 @@
         const categoryFilter = document.getElementById('categoryFilter');
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
-
+	//
+//Para menu hamburguesa alerta roja 
+const productIndicator = document.getElementById('productIndicator');
+//
         // Render services
         function renderServices(filteredServices = services) {
             servicesGrid.innerHTML = '';
@@ -608,6 +613,12 @@
                 cartTotal.textContent = 'S/. 0.00';
                 return;
             }
+			function hideProductIndicator() {
+  productIndicator.classList.add('hidden');
+}
+			if (cart.length === 0) {
+  hideProductIndicator();
+}
             
             emptyCartMessage.classList.add('hidden');
             cartItems.innerHTML = '';
@@ -669,7 +680,14 @@
             saveCart();
             updateQuantityDisplays();
             renderCartItems();
-            
+			function showProductIndicator() {
+  productIndicator.classList.remove('hidden');
+}
+            if (cart.length > 0) {
+  showProductIndicator();
+}
+			
+			
             // Show notification
             const notification = document.createElement('div');
             notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center animate-slideIn';
@@ -784,12 +802,21 @@
             });
             
             mobileCartButton.addEventListener('click', () => {
-                cartSidebar.classList.remove('translate-x-full');
-                cartOverlay.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-                mobileMenu.classList.add('hidden');
-            });
-            
+    // Mostrar sidebar carrito
+    cartSidebar.classList.remove('translate-x-full');
+    cartOverlay.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    // También ocultar menú móvil si está abierto
+    if (!mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+    }
+});
+            // Toggle mobile menu
+document.getElementById('mobileMenuButton').addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+});
+
+
             closeCartButton.addEventListener('click', () => {
                 cartSidebar.classList.add('translate-x-full');
                 cartOverlay.classList.add('hidden');
@@ -915,6 +942,11 @@
                 });
             });
             
+			
+
+			
+			
+			
             // Also handle non-scroll-link in case there are any
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 if (!anchor.classList.contains('scroll-link')) {
